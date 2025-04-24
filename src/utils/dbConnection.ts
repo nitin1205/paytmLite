@@ -20,7 +20,6 @@ export default async function connectToDb(){
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
     }
-
     if(!retries) process.exit(1) ; 
     
 };
