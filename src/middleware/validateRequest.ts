@@ -4,7 +4,6 @@ import { Request, Response, NextFunction } from "express";
 import log from "../utils/logger";
 
 export const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body.firstName);
     try {
         schema.parse({
             body: req.body,
@@ -14,8 +13,8 @@ export const validate = (schema: AnyZodObject) => (req: Request, res: Response, 
         next();
         return;
     } catch(error: any) {
-        log.error(`Request Validation failed  ErrMsg:- ${error.message}`);
-        res.status(400).send(error.message);
+        log.error(`Request Validation failed  ErrMsg:- ${error}`);
+        res.status(400).send(error.issues[0].message);
         return;
     }
 }

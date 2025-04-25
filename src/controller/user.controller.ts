@@ -1,13 +1,20 @@
 import { RequestHandler, Request, Response } from "express";
 
-import { createUser } from "../service/user.service";
+import { createUser, validatePassword } from "../service/user.service";
 import log from "../utils/logger";
-import { createUserInput } from "../schema/user.schema";
+import { createUserInput, userSignInUserInput } from "../schema/user.schema";
+import { signJwt } from "../utils/jwt.utils";
+import env from "../utils/env.utils";
 
 export const createUserHandler: RequestHandler = async(req: Request<{}, {}, createUserInput['body'] >, res: Response) => {
     try {
         const user = await createUser(req.body);
-        res.status(201).send(user);
+        const token = signJwt({
+            ...user
+        }, {
+            expiresIn: env.TOKENLIFETIME
+        });
+        res.status(201).send({user, token});
         return;
     } catch(error: any) {
         log.error(error.message)
@@ -15,3 +22,22 @@ export const createUserHandler: RequestHandler = async(req: Request<{}, {}, crea
         return;
     }
 };
+
+export const userSignInHandler: RequestHandler = async(req: Request<{}, {}, userSignInUserInput['body']>, res: Response): Promise<void> => {
+    const user = await validatePassword(req.body);
+    if (!user) {
+        res.status(411).send({ messaeg: "Error while logging in" });
+        return;
+    }
+
+    if(user) {
+        const token = signJwt({
+            ...user
+        }, {
+            expiresIn: env.TOKENLIFETIME
+        });
+
+        res.json({ token })
+        return;
+    }
+}

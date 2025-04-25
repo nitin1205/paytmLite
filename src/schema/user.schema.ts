@@ -4,7 +4,8 @@ export const createUserSchema = object({
     body: object({
         username: string({
             required_error: 'Username is required'
-        }).min(3, 'Username too short -- should be atleast 3 characters')
+        }).email('Valid email is required')
+        .min(3, 'Username too short -- should be atleast 3 characters')
         .max(30, 'Username too long -- should be atlesat 30 characters'),
         password: string({
             required_error: 'Password is required'
@@ -19,3 +20,16 @@ export const createUserSchema = object({
 });
 
 export type createUserInput = TypeOf<typeof createUserSchema>;
+
+export const userSignInSchema = object({
+    body: object({
+        username: string({
+            required_error: 'Username is required'
+        }).email('Invalid Email'),
+        password: string({
+            required_error: 'Password is required'
+        })
+    })
+});
+
+export type userSignInUserInput = TypeOf<typeof userSignInSchema>

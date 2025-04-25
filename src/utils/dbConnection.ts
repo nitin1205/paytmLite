@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import 'dotenv/config';
 
 import log from "./logger";
+import env from "./env.utils";
 
 export default async function connectToDb(){
-    const dbURL = process.env.dbURL as string;
+    const dbURL = env.dbURL;
     
     let retries = 3; 
     
