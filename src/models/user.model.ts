@@ -1,6 +1,7 @@
 import { CallbackWithoutResultAndOptionalError, model, Schema, Types } from "mongoose";
 import bcrypt from 'bcrypt';
-import 'dotenv/config';
+
+import env from "../utils/env.utils";
 
 interface User{
     password: string;
@@ -60,10 +61,7 @@ userSchema.pre('save',async function(next: CallbackWithoutResultAndOptionalError
 
     if(!user.isModified('password'))  return next();
     
-    const slatFactor = Number(process.env.SALT)
-
-    console.log(`salt factor---- ${slatFactor}`, typeof(slatFactor));
-    const salt = await bcrypt.genSalt(slatFactor) as unknown as number;
+    const salt = await bcrypt.genSalt(env.SALT_ROUNDS);
     const hashedPassword = await bcrypt.hash(user.password, salt);
     user.password = hashedPassword;
     return next();

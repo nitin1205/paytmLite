@@ -10,3 +10,21 @@ export async function createUser(input: UserInput) {
         throw new Error(error);
     }
 }
+
+export async function validatePassword(
+    {
+        username,
+        password
+    }: {
+        username: string,
+        password: string
+    }
+) {
+    const user = await UserModel.findOne({ username }).exec();
+
+    if(!user) return false;
+
+    const isValid = await user.comparePassword(password);
+
+    return omit(user.toJSON(), 'password');
+};
