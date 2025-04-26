@@ -1,6 +1,6 @@
 import { object, string, TypeOf } from "zod";
 
-export const createUserSchema = object({
+export const CreateUserSchema = object({
     body: object({
         username: string({
             required_error: 'Username is required'
@@ -19,9 +19,9 @@ export const createUserSchema = object({
     }),
 });
 
-export type createUserInput = TypeOf<typeof createUserSchema>;
+export type CreateUserInput = TypeOf<typeof CreateUserSchema>;
 
-export const userSignInSchema = object({
+export const UserSignInSchema = object({
     body: object({
         username: string({
             required_error: 'Username is required'
@@ -32,4 +32,20 @@ export const userSignInSchema = object({
     })
 });
 
-export type userSignInUserInput = TypeOf<typeof userSignInSchema>
+export type UserSignInInput = TypeOf<typeof UserSignInSchema>;
+
+export const UserUpdateSchema = object({
+    body: object({
+        password: string()
+        .min(6, 'Password too short -- should be atleast 6 characters')
+        .optional(),
+        firstName: string()
+        .max(50, 'FirstName too long -- should be atmost 50 characters')
+        .optional(),
+        lastName: string()
+        .max(50, 'Lastname too long -- should be atmost 50 characters')
+        .optional()
+    })
+});
+
+export type UserUpdateInput = TypeOf<typeof UserUpdateSchema>;

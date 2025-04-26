@@ -1,14 +1,9 @@
 import {  Request, Response, NextFunction } from "express";
 import { get } from "lodash";
+
 import { verifyJwt } from "../utils/jwt.utils";
-import { JwtPayload } from "jsonwebtoken";
+import JwtPayloadSchema from "../schema/jwtPayload.schema";
 
-
-
-
-interface customJwtPayload extends JwtPayload {
- _id: string;
-};
 
 declare global {
     namespace Express {
@@ -26,12 +21,16 @@ const deserializeUser = async(req: Request, res: Response, next: NextFunction) =
     const { decoded, expired } = verifyJwt(token);
     
     if (decoded) {
-        if(typeof decoded === 'object' && '_id' in decoded) {
-            const req.userId = decoded._id  
-        }
+        const validatedDecoded = JwtPayloadSchema.parse(decoded);
+        req.userId = validatedDecoded._id; 
+        return next();
     }
 
-    console.log("wegukkbfryeiufgyer", decoded, typeof(decoded));
+    if(expired) {
+      return res.status(403).json({ message: 'Token expired lognin again' }); 
+    }
+
+    
 
     return next();
 }
