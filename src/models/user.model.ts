@@ -1,9 +1,10 @@
-import { CallbackWithoutResultAndOptionalError, model, Schema, Types } from "mongoose";
+import { CallbackWithoutResultAndOptionalError, model, Schema } from "mongoose";
 import bcrypt from 'bcrypt';
 
 import env from "../utils/env.utils";
 
 interface User{
+    username: string;
     password: string;
     firstName: string;
     lastName: string;
@@ -12,20 +13,12 @@ interface User{
 }
 
 export interface UserDocument extends User {
-    _id: Types.ObjectId;
+    _id: Schema.Types.ObjectId;
     isModified(field: string): boolean;
     save(): Promise<UserDocument>;
     comparePassword(candidatePassword: string): Promise<boolean>;  
 }
 
-export type UserInput = Omit<UserDocument,
-'_id' |
-'createdAt' |
-'updatedAt' |
-'save' |
-'isModified' |
-'comparePassword'
->
 
 const userSchema = new Schema({
     username: {
@@ -54,6 +47,9 @@ const userSchema = new Schema({
         trim: true,
         maxLength: 50
     }
+},
+{
+    timestamps: true
 });
 
 userSchema.pre('save',async function(next: CallbackWithoutResultAndOptionalError) {
