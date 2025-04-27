@@ -4,7 +4,7 @@ import { createUserHandler, getUsersHandler, updateUserHandler, userSignInHandle
 import { validate } from "./middleware/validateRequest";
 import { CreateUserSchema, UserSignInSchema, UserUpdateSchema } from "./schema/user.schema";
 import authMiddleware from "./middleware/authMiddleware";
-import { getAccountBalanceHandler } from "./controller/account.controller";
+import { fundTransferHandler, getAccountBalanceHandler } from "./controller/account.controller";
 
 export default function router(app: Express) {
     app.get('/api/v1/ping', (req: Request, res: Response) => {
@@ -24,6 +24,8 @@ export default function router(app: Express) {
     app.get('/api/v1/user/bulk', authMiddleware, getUsersHandler);
 
     app.get('/api/v1/account/balance', authMiddleware, getAccountBalanceHandler);
+
+    app.post('/api/v1/account/transfer', authMiddleware, fundTransferHandler);
     
 
 }
